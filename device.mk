@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-$(call inherit-product, vendor/lenovo/a3/a3-vendor.mk)
+$(call inherit-product-if-exists, vendor/lenovo/a3/a3-vendor.mk)
 
 DEVICE_PACKAGE_OVERLAYS += $(LOCAL_PATH)/overlay/
 
@@ -30,13 +30,8 @@ PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/root/init.mt8389.rc:root/init.mt8389.rc \
 	$(LOCAL_PATH)/root/init.modem.rc:root/init.modem.rc \
 	$(LOCAL_PATH)/root/init.protect.rc:root/init.protect.rc \
-	$(LOCAL_PATH)/root/init.mt8389.usb.rc:/root/init.mt8389.usb.rc \
-	$(LOCAL_PATH)/root/ueventd.mt8389.rc:root/ueventd.mt8389.rc \
-	$(LOCAL_PATH)/recovery/twrp.fstab:recovery/root/etc/twrp.fstab
-
-# TWRP, y u no create /tmp?
-PRODUCT_COPY_FILES += \
-	$(LOCAL_PATH)/recovery/postrecoveryboot.sh:recovery/root/sbin/postrecoveryboot.sh
+	$(LOCAL_PATH)/root/init.mt8389.usb.rc:root/init.mt8389.usb.rc \
+	$(LOCAL_PATH)/root/ueventd.mt8389.rc:root/ueventd.mt8389.rc
 
 # frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml
 

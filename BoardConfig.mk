@@ -54,43 +54,45 @@ USE_OPENGL_RENDERER := true
 BOARD_EGL_WORKAROUND_BUG_10194508 := true
 
 # kernel
-TARGET_KERNEL_CONFIG := .config
-export TARGET_KERNEL_PRODUCT := a3000_prc_3gfull
+# Prebuilt zImage from TWRP 2.7.1.0 FUSE, MTK header stripped (boot.mk adds it back).
+# It is only used while kernel/lenovo/a3 is absent; once that is synced, the source
+# build (TARGET_KERNEL_CONFIG / TARGET_KERNEL_PRODUCT) takes over.
+TARGET_PREBUILT_KERNEL := $(LOCAL_PATH)/prebuilt/kernel
+#TARGET_KERNEL_CONFIG := .config
+#export TARGET_KERNEL_PRODUCT := a3000_prc_3gfull
 
-# partition info
-BOARD_BOOTIMAGE_PARTITION_SIZE := 629145600
-BOARD_SYSTEMIMAGE_PARTITION_SIZE := 16116613120
-BOARD_USERDATAIMAGE_PARTITION_SIZE:= 48307896320
-BOARD_RECOVERYIMAGE_PARTITION_SIZE := 629145600
+# boot.mk calls mkbootimg with BOARD_MKBOOTIMG_ARGS only, so base and pagesize go here too.
+# The cmdline is left empty, like the stock and TWRP 2.7.1 images: init takes ro.hardware
+# (mt6589) from /proc/cpuinfo.
+BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
+BOARD_MKBOOTIMG_ARGS := --base 0x10000000 --pagesize 2048 \
+    --kernel_offset 0x00008000 --ramdisk_offset 0x01000000 \
+    --second_offset 0x00f00000 --tags_offset 0x00000100
+
+# partition info (FUSE scatter)
+# BOOTIMG and RECOVERY are 6 MiB in the scatter. TODO: confirm with /proc/dumchar_info.
+BOARD_BOOTIMAGE_PARTITION_SIZE := 6291456
+BOARD_RECOVERYIMAGE_PARTITION_SIZE := 6291456
+# ANDROID 0x10f80000..0x42f80000
+BOARD_SYSTEMIMAGE_PARTITION_SIZE := 838860800
+# USRDATA runs to the end of the eMMC. TODO: set from dumchar_info (minus the 16 KiB crypto footer).
+#BOARD_USERDATAIMAGE_PARTITION_SIZE :=
 BOARD_FLASH_BLOCK_SIZE := 512
 TARGET_USERIMAGES_USE_EXT4 := true
 
-# recovery
-TARGET_NO_SEPARATE_RECOVERY := true
-RECOVERY_NAME := ClockworkMod Recovery for the Lenovo IdeaTab A3000-H
-TARGET_COMMON_NAME := Lenovo IdeaTab A3000-H
-#BOARD_RECOVERY_SWIPE := true
-TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/root/fstab.mt8389
-BOARD_HAS_NO_SELECT_BUTTON := true
-BOARD_USE_MTK_LAYOUT := true
-BOARD_MTK_BOOT_LABEL := "/bootimg"
-BOARD_HAS_LOW_RESOLUTION := true
-TARGET_SCREEN_HEIGHT := 1024
-TARGET_SCREEN_WIDTH := 600
+# vendor/cm sets ro.adb.secure=1. CM Recovery can't show an adb key prompt; it only
+# trusts /data/misc/adb/adb_keys, which a fresh /data doesn't have. During bring-up,
+# turn adb auth off on non-user builds. The first value in the list wins, so it goes first.
+ifneq ($(TARGET_BUILD_VARIANT),user)
+ADDITIONAL_DEFAULT_PROPERTIES := ro.adb.secure=0 $(ADDITIONAL_DEFAULT_PROPERTIES)
+endif
 
-# TWRP
-BOARD_HAS_LARGE_FILESYSTEM := true
-RECOVERY_GRAPHICS_USE_LINELENGTH := true
-TW_NO_REBOOT_BOOTLOADER := true
-TW_BRIGHTNESS_PATH := /sys/devices/platform/leds-mt65xx/leds/lcd-backlight/brightness
-TW_MAX_BRIGHTNESS := 255
-TW_CUSTOM_BATTERY_PATH := /sys/devices/platform/mt6320-battery/power_supply/battery
-TW_INTERNAL_STORAGE_PATH := "/sdcard"
-TW_INTERNAL_STORAGE_MOUNT_POINT := "sdcard"
-TW_EXTERNAL_STORAGE_PATH := "/external_sdcard"
-TW_EXTERNAL_STORAGE_MOUNT_POINT := "external_sdcard"
-TW_THEME := landscape_mdpi
+# recovery (CM Recovery, FUSE layout)
+TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/recovery.fstab
+# Untested on the MTK framebuffer: if colours are wrong, try "BGRA_8888" / "RGBX_8888";
+# if the screen stays black or does not update, try BOARD_RECOVERY_NEEDS_FBIOPAN_DISPLAY := true.
+#TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
 
 # wifi
 WPA_SUPPLICANT_VERSION := VER_0_8_X

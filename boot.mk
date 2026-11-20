@@ -19,6 +19,17 @@ define make_header
   perl -e 'print pack("a4 L a32 a472", "\x88\x16\x88\x58", $$ARGV[0], $$ARGV[1], "\xFF"x472)' $(1) $(2) > $(3)
 endef
 
+# assert-max-image-size uses the NAND formula (page + spare, minus a yaffs reserve),
+# which is wrong for eMMC. Check the raw byte size instead.
+# $(1): image, $(2): partition size in bytes
+define assert-raw-image-size
+  size=$$(stat -c %s $(1)); \
+	if [ $$size -gt $(2) ]; then \
+	  echo "error: $(1) too large ($$size > $(2))"; rm -f $(1); exit 1; \
+	fi; \
+	echo "$(1): $$size of $(2) bytes"
+endef
+
 # this is overriding targets from build/core/Makefile
 $(INSTALLED_KERNEL_TARGET).mtk.header: $(INSTALLED_KERNEL_TARGET)
 	size=$$($(call get-file-size,$(INSTALLED_KERNEL_TARGET))); \
@@ -36,19 +47,29 @@ $(INSTALLED_RAMDISK_TARGET).mtk: $(INSTALLED_RAMDISK_TARGET).mtk.header
 	cat $(INSTALLED_RAMDISK_TARGET).mtk.header $(INSTALLED_RAMDISK_TARGET) \
 		> $@
 
-$(PRODUCT_OUT)/recovery_kernel.mtk.header: $(recovery_kernel)
-	size=$$($(call get-file-size,$(recovery_kernel))); \
+# build/core/Makefile sets recovery_kernel with a trailing comment, so its value
+# ends in a space and get-file-size (which quotes the path) would return nothing.
+mtk_recovery_kernel := $(strip $(recovery_kernel))
+$(PRODUCT_OUT)/recovery_kernel.mtk.header: $(mtk_recovery_kernel)
+	size=$$($(call get-file-size,$(mtk_recovery_kernel))); \
 		$(call make_header, $$((size)), "KERNEL", $@)
 $(PRODUCT_OUT)/recovery_kernel.mtk: $(PRODUCT_OUT)/recovery_kernel.mtk.header
 	$(call pretty,"Adding MTK header to recovery kernel.")
-	cat $(PRODUCT_OUT)/recovery_kernel.mtk.header $(recovery_kernel) > $@
+	cat $(PRODUCT_OUT)/recovery_kernel.mtk.header $(mtk_recovery_kernel) > $@
 
-$(recovery_ramdisk).mtk.header: $(recovery_ramdisk)
-	size=$$($(call get-file-size,$(recovery_ramdisk))); \
+# The gzip recovery ramdisk makes recovery.img too big for the 6 MiB partition.
+# The prebuilt kernel has CONFIG_RD_LZMA (its initramfs decompressors are gzip,
+# bzip2 and lzma), so the recovery ramdisk is recompressed with LZMA.
+$(recovery_ramdisk).lzma: $(recovery_ramdisk)
+	$(call pretty,"Recompressing recovery ramdisk with LZMA.")
+	gzip -dc $(recovery_ramdisk) | xz --format=lzma -9e -c > $@
+
+$(recovery_ramdisk).mtk.header: $(recovery_ramdisk).lzma
+	size=$$($(call get-file-size,$(recovery_ramdisk).lzma)); \
 		$(call make_header, $$((size)), "RECOVERY", $@)
 $(recovery_ramdisk).mtk:  $(MKBOOTIMG) $(recovery_ramdisk).mtk.header
 	$(call pretty,"Adding MTK header to recovery ramdisk.")
-	cat $(recovery_ramdisk).mtk.header $(recovery_ramdisk) > $@
+	cat $(recovery_ramdisk).mtk.header $(recovery_ramdisk).lzma > $@
 
 INTERNAL_MTK_BOOTIMAGE_ARGS := \
 		--kernel $(INSTALLED_KERNEL_TARGET).mtk \
@@ -59,8 +80,7 @@ $(INSTALLED_BOOTIMAGE_TARGET): $(MKBOOTIMG)\
 	$(call pretty,"Target boot image: $@")
 	$(MKBOOTIMG) $(INTERNAL_MTK_BOOTIMAGE_ARGS) $(BOARD_MKBOOTIMG_ARGS) \
 		--output $@
-	$(hide) $(call assert-max-image-size,$@, \
-		$(BOARD_BOOTIMAGE_PARTITION_SIZE),raw)
+	$(hide) $(call assert-raw-image-size,$@,$(BOARD_BOOTIMAGE_PARTITION_SIZE))
 	@echo -e ${CL_CYN}"Made boot image: $@"${CL_RST}
 
 INTERNAL_MTK_RECOVERYIMAGE_ARGS := \
@@ -72,6 +92,5 @@ $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) \
 	@echo -e ${CL_CYN}"----- Making recovery image ------"${CL_RST}
 	$(MKBOOTIMG) $(INTERNAL_MTK_RECOVERYIMAGE_ARGS) \
 		$(BOARD_MKBOOTIMG_ARGS) --output $@
-	$(hide) $(call assert-max-image-size,$@, \
-		$(BOARD_RECOVERYIMAGE_PARTITION_SIZE),raw)
+	$(hide) $(call assert-raw-image-size,$@,$(BOARD_RECOVERYIMAGE_PARTITION_SIZE))
 	@echo -e ${CL_CYN}"Made recovery image: $@"${CL_RST}

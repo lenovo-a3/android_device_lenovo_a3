@@ -1,0 +1,16 @@
+# Recovery fstab for the Lenovo IdeaTab A3000-H, FUSE layout
+# (no FAT partition; internal storage is emulated in /data/media).
+# Partitions 1-8 per MT6589_Android_scatter_emmc.txt (FUSE):
+#   p5 FAC, p6 ANDROID, p7 CACHE, p8 USRDATA (to the end of the eMMC).
+# Raw partitions are MTK dumchar devices under /dev.
+#
+#<src>                                     <mnt_point>  <type>  <mnt_flags and options>  <fs_mgr_flags>
+/dev/block/mmcblk0p6                       /system      ext4    ro,noatime               wait
+/dev/block/mmcblk0p7                       /cache       ext4    noatime,nosuid,nodev     wait
+/dev/block/mmcblk0p8                       /data        ext4    noatime,nosuid,nodev     wait,encryptable=footer
+
+/dev/bootimg                               /boot        emmc    defaults                 defaults
+/dev/recovery                              /recovery    emmc    defaults                 defaults
+/dev/misc                                  /misc        emmc    defaults                 defaults
+
+/devices/platform/mtk-msdc.1/mmc_host/mmc1 auto         auto    defaults                 voldmanaged=sdcard1:auto
