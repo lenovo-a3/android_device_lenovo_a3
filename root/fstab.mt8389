@@ -1,30 +1,23 @@
-# Android fstab file.
-#<src>           <mnt_point>         <type>    <mnt_flags and options>                 <fs_mgr_flags>
-# The filesystem that contains the filesystem checker binary (typically /system) cannot
-# specify MF_CHECK, and must come before any filesystems that do specify MF_CHECK
+# Android fstab for the Lenovo IdeaTab A3000-H, FUSE layout (cm-12.1).
+# No FAT partition: internal storage is emulated in /data/media (sdcard service
+# in init.mt8389.rc). Partitions per MT6589_Android_scatter_emmc.txt (FUSE):
+#   p5 FAC, p6 ANDROID, p7 CACHE, p8 USRDATA.
+# L fs_mgr can't resolve MTK's /emmc@<name> aliases, so mmcblk0pN is used.
+# The filesystem holding e2fsck (/system) can't use "check" and must come first.
+#
+#<src>                 <mnt_point>  <type>  <mnt_flags and options>                                   <fs_mgr_flags>
+/dev/block/mmcblk0p6   /system      ext4    ro,noatime                                                wait
+/dev/block/mmcblk0p7   /cache       ext4    noatime,nosuid,nodev,noauto_da_alloc                      wait,check
+/dev/block/mmcblk0p8   /data        ext4    noatime,nosuid,nodev,noauto_da_alloc                      wait,check,encryptable=footer
+# PROTECT_F/PROTECT_S (p2/p3) are mounted by init.protect.rc, not here: any failed
+# mount makes mount_all return -1, and then L init never triggers "nonencrypted"
+# (no class main). They are optional, so they must not be able to block the boot.
 
-/emmc@android     /system             ext4      ro,noatime                              wait
-/emmc@cache       /cache              ext4      noatime,nosuid,nodev,noauto_da_alloc    wait
-/emmc@usrdata     /data               ext4      noatime,nosuid,nodev,noauto_da_alloc    wait,encryptable=footer
+# external microSD and USB OTG (vold)
+/devices/platform/mtk-msdc.1/mmc_host/mmc1  auto  auto  nosuid,nodev  voldmanaged=sdcard1:auto
+/devices/platform/mt_usb                    auto  auto  nosuid,nodev  voldmanaged=usbdisk0:auto
 
-# Hack for CWM
-/dev/block/mmcblk0p8 /emmc            vfat      defaults                                recoveryonly
-
-/devices/platform/mtk-msdc.0/mmc_host/mmc0 auto     auto        defaults     voldmanaged=sdcard0:8,nonremovable,noemulatedsd
-/devices/platform/mtk-msdc.1/mmc_host/mmc1 auto     auto        nosuid,nodev voldmanaged=sdcard1:auto
-
-/devices/platform/mt_usb auto auto defaults voldmanaged=usbdisk0:auto
-
-/dev/bootimg      /boot               emmc      defaults          			defaults
-/dev/recovery     /recovery           emmc      defaults                                defaults
-/dev/uboot        /uboot              emmc      defaults                                defaults
-
-### Reference
-# emmc@android -> /dev/block/mmcblk0p5
-# emmc@cache -> /dev/block/mmcblk0p6
-# emmc@ebr1 -> /dev/block/mmcblk0p1
-# emmc@fat -> /dev/block/mmcblk0p8
-# emmc@protect_f -> /dev/block/mmcblk0p2
-# emmc@protect_s -> /dev/block/mmcblk0p3
-# emmc@sec_ro -> /dev/block/mmcblk0p4
-# emmc@usrdata -> /dev/block/mmcblk0p7
+# raw MTK dumchar partitions
+/dev/bootimg           /boot        emmc    defaults                                                  defaults
+/dev/recovery          /recovery    emmc    defaults                                                  defaults
+/dev/misc              /misc        emmc    defaults                                                  defaults
