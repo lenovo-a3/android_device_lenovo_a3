@@ -57,27 +57,31 @@ $(PRODUCT_OUT)/recovery_kernel.mtk: $(PRODUCT_OUT)/recovery_kernel.mtk.header
 	$(call pretty,"Adding MTK header to recovery kernel.")
 	cat $(PRODUCT_OUT)/recovery_kernel.mtk.header $(mtk_recovery_kernel) > $@
 
-# The prebuilt kernel can only unpack gzip initramfs (no CONFIG_RD_LZMA/XZ:
-# an LZMA ramdisk panics in mount_block_root), and the stock gzip ramdisk makes
-# recovery.img too big for the 6 MiB partition. So the recovery root is repacked
-# with gzip -9 and without the tools below: bu (adb backup), mount.exfat
-# (exFAT SD cards) and mkfs.f2fs (no f2fs here).
-RECOVERY_RAMDISK_TRIM := sbin/bu sbin/mount.exfat sbin/mkfs.f2fs
+# The stock gzip recovery ramdisk (3.4 MB) doesn't fit the 6 MiB partition next to
+# the 3.2 MB kernel, so the recovery root is repacked as legacy .lzma (about 1.7 MB).
+# Our kernel has CONFIG_RD_LZMA; the old TWRP 2.7.1 prebuilt kernel did not (it
+# panicked in mount_block_root), so don't use this with that kernel.
+# For initramfs, unlzma allocates a buffer of the header's dictionary size (a
+# streamed .lzma has no output size), so the dictionary is capped at 8 MiB, which
+# still covers the whole uncompressed cpio (~5.2 MB). -9 would mean 64 MiB.
+# Files listed in RECOVERY_RAMDISK_TRIM are left out (none needed right now).
+RECOVERY_RAMDISK_TRIM :=
+RECOVERY_RAMDISK_LZMA_FLAGS := --format=lzma --lzma1=preset=9e,dict=8MiB
 recovery_trim_root := $(PRODUCT_OUT)/recovery-trimmed-root
 
-$(recovery_ramdisk).trimmed: $(recovery_ramdisk) $(MKBOOTFS) $(MINIGZIP)
-	$(call pretty,"Repacking trimmed recovery ramdisk.")
+$(recovery_ramdisk).lzma: $(recovery_ramdisk) $(MKBOOTFS)
+	$(call pretty,"Repacking recovery ramdisk as lzma.")
 	rm -rf $(recovery_trim_root)
 	cp -a $(TARGET_RECOVERY_ROOT_OUT) $(recovery_trim_root)
-	rm -f $(addprefix $(recovery_trim_root)/,$(RECOVERY_RAMDISK_TRIM))
-	$(MKBOOTFS) $(recovery_trim_root) | $(MINIGZIP) -9 > $@
+	$(if $(strip $(RECOVERY_RAMDISK_TRIM)),rm -f $(addprefix $(recovery_trim_root)/,$(RECOVERY_RAMDISK_TRIM)))
+	$(MKBOOTFS) $(recovery_trim_root) | xz $(RECOVERY_RAMDISK_LZMA_FLAGS) > $@
 
-$(recovery_ramdisk).mtk.header: $(recovery_ramdisk).trimmed
-	size=$$($(call get-file-size,$(recovery_ramdisk).trimmed)); \
+$(recovery_ramdisk).mtk.header: $(recovery_ramdisk).lzma
+	size=$$($(call get-file-size,$(recovery_ramdisk).lzma)); \
 		$(call make_header, $$((size)), "RECOVERY", $@)
 $(recovery_ramdisk).mtk:  $(MKBOOTIMG) $(recovery_ramdisk).mtk.header
 	$(call pretty,"Adding MTK header to recovery ramdisk.")
-	cat $(recovery_ramdisk).mtk.header $(recovery_ramdisk).trimmed > $@
+	cat $(recovery_ramdisk).mtk.header $(recovery_ramdisk).lzma > $@
 
 INTERNAL_MTK_BOOTIMAGE_ARGS := \
 		--kernel $(INSTALLED_KERNEL_TARGET).mtk \
