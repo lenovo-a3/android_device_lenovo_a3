@@ -15,10 +15,8 @@ bin/nvram_agent_binder
 bin/nvram_daemon
 bin/orientationd
 bin/permission_check
-bin/pppd 
 bin/pppd_dt
 bin/rild
-bin/rildmd2
 bin/stp_dump3
 bin/thermal
 bin/thermal_manager
@@ -106,7 +104,6 @@ lib/libssladp.so
 lib/mtk-ril.so
 vendor/bin/pvrsrvctl
 vendor/bin/rc.fac
-vendor/lib/drm/libdrmwvmplugin.so
 vendor/lib/egl/libEGL_mtk.so
 vendor/lib/egl/libGLESv1_CM_mtk.so
 vendor/lib/egl/libGLESv2_mtk.so
@@ -122,7 +119,6 @@ vendor/lib/libsrv_init.so
 vendor/lib/libsrv_um.so
 vendor/lib/libusc.so
 vendor/lib/libwvdrm_L3.so
-vendor/lib/libwvm.so
 vendor/pittpatt/models/detection/multi_pose_face_landmark_detectors.7/left_eye-y0-yi45-p0-pi45-r0-ri20.lg_32/full_model.bin
 vendor/pittpatt/models/detection/multi_pose_face_landmark_detectors.7/nose_base-y0-yi45-p0-pi45-r0-ri20.lg_32/full_model.bin
 vendor/pittpatt/models/detection/multi_pose_face_landmark_detectors.7/right_eye-y0-yi45-p0-pi45-r0-ri20.lg_32-2/full_model.bin

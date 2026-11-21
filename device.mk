@@ -91,6 +91,11 @@ PRODUCT_TAGS += dalvik.gc.type-precise
 PRODUCT_PACKAGES += \
 	gsm0710muxd
 
+# KK blob compatibility (mtkshim/Android.mk); libmtkshim is LD_PRELOADed in init.mt8389.rc
+PRODUCT_PACKAGES += \
+	libmtkshim \
+	libcorkscrew
+
 # audio
 PRODUCT_PACKAGES += \
 	audio.r_submix.default \

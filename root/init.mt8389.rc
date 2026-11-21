@@ -9,6 +9,9 @@ on boot
     chown root radio /proc/cmdline
 
 on init
+    # KK blob symbols missing from L (device/lenovo/a3/mtkshim)
+    export LD_PRELOAD /system/lib/libmtkshim.so
+
     mkdir /mnt/media_rw/sdcard0 0700 media_rw media_rw
     mkdir /mnt/media_rw/sdcard1 0700 media_rw media_rw
     mkdir /storage/sdcard0 0700 root root
