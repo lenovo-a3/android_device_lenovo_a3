@@ -31,7 +31,9 @@ PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/root/init.modem.rc:root/init.modem.rc \
 	$(LOCAL_PATH)/root/init.protect.rc:root/init.protect.rc \
 	$(LOCAL_PATH)/root/init.mt8389.usb.rc:root/init.mt8389.usb.rc \
-	$(LOCAL_PATH)/root/ueventd.mt8389.rc:root/ueventd.mt8389.rc
+	$(LOCAL_PATH)/root/ueventd.mt8389.rc:root/ueventd.mt8389.rc \
+	$(LOCAL_PATH)/root/init.a3.debug.rc:root/init.a3.debug.rc \
+	$(LOCAL_PATH)/debug/bootlog.sh:system/bin/bootlog.sh
 
 # frameworks/native/data/etc/android.hardware.wifi.direct.xml:system/etc/permissions/android.hardware.wifi.direct.xml
 

@@ -1,0 +1,22 @@
+# Bring-up logging to /cache/bootlog (see /system/bin/bootlog.sh).
+# Remove the import in init.mt8389.rc once the ROM boots reliably.
+
+on post-fs
+    # keep the previous boot's logs, start fresh for this one
+    exec /system/bin/rm -rf /cache/bootlog.old
+    exec /system/bin/mv /cache/bootlog /cache/bootlog.old
+    mkdir /cache/bootlog 0775 root root
+    start bootlog_logcat
+    start bootlog_snap
+
+service bootlog_logcat /system/bin/logcat -b main -b system -b events -b radio -v threadtime -f /cache/bootlog/logcat.txt -r 4096 -n 4
+    user root
+    group root log
+    # not oneshot: logd may not be up yet at post-fs, so init restarts it until it is
+    disabled
+
+service bootlog_snap /system/bin/sh /system/bin/bootlog.sh
+    user root
+    group root log
+    disabled
+    oneshot

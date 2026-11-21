@@ -1,6 +1,8 @@
 import init.mt8389.usb.rc
 import init.modem.rc
 import init.protect.rc
+# bring-up logging, remove once the ROM boots reliably
+import init.a3.debug.rc
 
 on early-init
     # Bring-up: permissive regardless of the cmdline. The kernel uses lk's cmdline
