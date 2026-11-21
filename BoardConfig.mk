@@ -38,7 +38,6 @@ BOARD_HAS_MTK_HARDWARE := true
 COMMON_GLOBAL_CFLAGS += -DREFBASE_JB_MR1_COMPAT_SYMBOLS
 BOARD_HAVE_PRE_KITKAT_AUDIO_BLOB := true
 BOARD_HAVE_PRE_KITKAT_AUDIO_POLICY_BLOB := true
-BOARD_NEEDS_OLD_HWC_API := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 
 # BT
@@ -61,7 +60,7 @@ BOARD_EGL_WORKAROUND_BUG_10194508 := true
 # kernel
 # Built from kernel/lenovo/a3 (lenovo-a3/android_kernel_lenovo_mt8389, cm-12.1).
 # a3_defconfig = the MTK-generated config (mt6589 + lenovo89_tb_twn_a_jb2 + a3000_*)
-# plus LZ4 kernel compression and KALLSYMS. The MTK kernel Makefile also needs
+# plus LZMA kernel compression and KALLSYMS. The MTK kernel Makefile also needs
 # TARGET_KERNEL_PRODUCT to find its custom/ and config/ dirs; the a3000_* 3G
 # variants have identical kernel configs.
 TARGET_KERNEL_SOURCE := kernel/lenovo/a3
@@ -81,7 +80,7 @@ BOARD_MKBOOTIMG_ARGS := --base 0x10000000 --pagesize 2048 \
     --second_offset 0x00f00000 --tags_offset 0x00000100
 
 # partition info (FUSE scatter)
-# BOOTIMG and RECOVERY are 6 MiB in the scatter. TODO: confirm with /proc/dumchar_info.
+# BOOTIMG and RECOVERY are 6 MiB (scatter and /proc/dumchar_info agree).
 BOARD_BOOTIMAGE_PARTITION_SIZE := 6291456
 BOARD_RECOVERYIMAGE_PARTITION_SIZE := 6291456
 # ANDROID 0x10f80000..0x42f80000
@@ -100,6 +99,9 @@ endif
 
 # recovery (CM Recovery, FUSE layout)
 TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/recovery.fstab
+# No recovery-from-boot patch: imgdiff can't diff our LZMA recovery ramdisk
+# against the gzip boot ramdisk, and the ROM shouldn't rewrite RECOVERY at boot.
+BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH := true
 # Untested on the MTK framebuffer: if colours are wrong, try "BGRA_8888" / "RGBX_8888";
 # if the screen stays black or does not update, try BOARD_RECOVERY_NEEDS_FBIOPAN_DISPLAY := true.
 #TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"

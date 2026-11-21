@@ -16,6 +16,7 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_SHARED_LIBRARIES := \
 	libcutils \
+	liblog \
 
 LOCAL_CFLAGS := \
 	-DMUX_ANDROID \
@@ -36,7 +37,6 @@ endif
 LOCAL_CFLAGS += -DMTK_RIL_MD1
 
 LOCAL_C_INCLUDES := $(KERNEL_HEADERS)
-LOCAL_LDLIBS := -lpthread
 
 include $(BUILD_EXECUTABLE)
 
@@ -53,6 +53,7 @@ LOCAL_SRC_FILES:= \
 
 LOCAL_SHARED_LIBRARIES := \
 	libcutils \
+	liblog \
 
 LOCAL_CFLAGS := \
 	-DMUX_ANDROID \
@@ -68,6 +69,5 @@ endif
 LOCAL_CFLAGS += -DMTK_RIL_MD2
 
 LOCAL_C_INCLUDES := $(KERNEL_HEADERS)
-LOCAL_LDLIBS := -lpthread
 
 include $(BUILD_EXECUTABLE)
