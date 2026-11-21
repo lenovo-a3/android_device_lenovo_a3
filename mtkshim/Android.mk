@@ -10,6 +10,8 @@
 # libcorkscrew: L dropped libcorkscrew, but gralloc.mt8389.so has it in
 # DT_NEEDED, so a library of that name has to exist.
 #
+# camera.c is generated (tools/gen-mtkcamparams.py in the workspace).
+#
 # Symbol list: see shim-audit.txt / tools/blob-audit.py in the workspace.
 #
 
@@ -20,6 +22,7 @@ LOCAL_MODULE := libmtkshim
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := \
 	audio.c \
+	camera.c \
 	callstack.c \
 	netutils.c \
 	pmem.c \
