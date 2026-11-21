@@ -54,12 +54,17 @@ USE_OPENGL_RENDERER := true
 BOARD_EGL_WORKAROUND_BUG_10194508 := true
 
 # kernel
-# Prebuilt zImage from TWRP 2.7.1.0 FUSE, MTK header stripped (boot.mk adds it back).
-# It is only used while kernel/lenovo/a3 is absent; once that is synced, the source
-# build (TARGET_KERNEL_CONFIG / TARGET_KERNEL_PRODUCT) takes over.
+# Built from kernel/lenovo/a3 (lenovo-a3/android_kernel_lenovo_mt8389, cm-12.1).
+# a3_defconfig = the MTK-generated config (mt6589 + lenovo89_tb_twn_a_jb2 + a3000_*)
+# plus LZ4 kernel compression and KALLSYMS. The MTK kernel Makefile also needs
+# TARGET_KERNEL_PRODUCT to find its custom/ and config/ dirs; the a3000_* 3G
+# variants have identical kernel configs.
+TARGET_KERNEL_SOURCE := kernel/lenovo/a3
+TARGET_KERNEL_CONFIG := a3_defconfig
+export TARGET_KERNEL_PRODUCT := a3000_row_call
+# Fallback, used only while kernel/lenovo/a3 is absent: zImage from TWRP 2.7.1.0 FUSE,
+# MTK header stripped (boot.mk adds it back).
 TARGET_PREBUILT_KERNEL := $(LOCAL_PATH)/prebuilt/kernel
-#TARGET_KERNEL_CONFIG := .config
-#export TARGET_KERNEL_PRODUCT := a3000_prc_3gfull
 
 # boot.mk calls mkbootimg with BOARD_MKBOOTIMG_ARGS only, so base and pagesize go here too.
 # The cmdline is left empty, like the stock and TWRP 2.7.1 images: init takes ro.hardware
