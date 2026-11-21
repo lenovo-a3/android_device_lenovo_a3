@@ -57,19 +57,27 @@ $(PRODUCT_OUT)/recovery_kernel.mtk: $(PRODUCT_OUT)/recovery_kernel.mtk.header
 	$(call pretty,"Adding MTK header to recovery kernel.")
 	cat $(PRODUCT_OUT)/recovery_kernel.mtk.header $(mtk_recovery_kernel) > $@
 
-# The gzip recovery ramdisk makes recovery.img too big for the 6 MiB partition.
-# The prebuilt kernel has CONFIG_RD_LZMA (its initramfs decompressors are gzip,
-# bzip2 and lzma), so the recovery ramdisk is recompressed with LZMA.
-$(recovery_ramdisk).lzma: $(recovery_ramdisk)
-	$(call pretty,"Recompressing recovery ramdisk with LZMA.")
-	gzip -dc $(recovery_ramdisk) | xz --format=lzma -9e -c > $@
+# The prebuilt kernel can only unpack gzip initramfs (no CONFIG_RD_LZMA/XZ:
+# an LZMA ramdisk panics in mount_block_root), and the stock gzip ramdisk makes
+# recovery.img too big for the 6 MiB partition. So the recovery root is repacked
+# with gzip -9 and without the tools below: bu (adb backup), mount.exfat
+# (exFAT SD cards) and mkfs.f2fs (no f2fs here).
+RECOVERY_RAMDISK_TRIM := sbin/bu sbin/mount.exfat sbin/mkfs.f2fs
+recovery_trim_root := $(PRODUCT_OUT)/recovery-trimmed-root
 
-$(recovery_ramdisk).mtk.header: $(recovery_ramdisk).lzma
-	size=$$($(call get-file-size,$(recovery_ramdisk).lzma)); \
+$(recovery_ramdisk).trimmed: $(recovery_ramdisk) $(MKBOOTFS) $(MINIGZIP)
+	$(call pretty,"Repacking trimmed recovery ramdisk.")
+	rm -rf $(recovery_trim_root)
+	cp -a $(TARGET_RECOVERY_ROOT_OUT) $(recovery_trim_root)
+	rm -f $(addprefix $(recovery_trim_root)/,$(RECOVERY_RAMDISK_TRIM))
+	$(MKBOOTFS) $(recovery_trim_root) | $(MINIGZIP) -9 > $@
+
+$(recovery_ramdisk).mtk.header: $(recovery_ramdisk).trimmed
+	size=$$($(call get-file-size,$(recovery_ramdisk).trimmed)); \
 		$(call make_header, $$((size)), "RECOVERY", $@)
 $(recovery_ramdisk).mtk:  $(MKBOOTIMG) $(recovery_ramdisk).mtk.header
 	$(call pretty,"Adding MTK header to recovery ramdisk.")
-	cat $(recovery_ramdisk).mtk.header $(recovery_ramdisk).lzma > $@
+	cat $(recovery_ramdisk).mtk.header $(recovery_ramdisk).trimmed > $@
 
 INTERNAL_MTK_BOOTIMAGE_ARGS := \
 		--kernel $(INSTALLED_KERNEL_TARGET).mtk \
