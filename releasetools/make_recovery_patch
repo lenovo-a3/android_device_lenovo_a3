@@ -1,0 +1,74 @@
+#!/usr/bin/env python
+#
+# a3: stock build/tools/releasetools/make_recovery_patch, but the
+# recovery-from-boot patch is made with bsdiff instead of imgdiff
+# (TARGET_RELEASETOOL_MAKE_RECOVERY_PATCH_SCRIPT in BoardConfig.mk).
+#
+# imgdiff fails on our images: recovery.img has an LZMA ramdisk and both
+# images carry the MTK KERNEL/ROOTFS/RECOVERY headers (boot.mk), so imgdiff
+# returns no patch and the stock script dies with
+# "TypeError: must be string or buffer, not None".
+# Skipping the patch is not an option: ota_from_target_files only builds a
+# block-based OTA if SYSTEM/recovery-from-boot.p exists, and its file-based
+# fallback calls MakeRecoveryPatch (and imgdiff) again.
+# bsdiff is format-agnostic and applypatch on the device takes BSDIFF40
+# patches as well as IMGDIFF2. The bonus file (-b recovery-resource.dat) is
+# imgdiff-only, so it is not used.
+#
+
+import os
+import sys
+
+sys.path.insert(0, os.path.join(os.getcwd(), "build", "tools", "releasetools"))
+
+import common
+
+OPTIONS = common.OPTIONS
+
+
+_Difference = common.Difference
+
+
+class _BsdiffDifference(_Difference):
+  def __init__(self, tf, sf, diff_program=None):
+    _Difference.__init__(self, tf, sf, diff_program="bsdiff")
+
+
+def main(argv):
+  args = common.ParseOptions(argv, __doc__)
+  input_dir, output_dir = args
+
+  OPTIONS.info_dict = common.LoadInfoDict(input_dir)
+
+  recovery_img = common.GetBootableImage("recovery.img", "recovery.img",
+                                         input_dir, "RECOVERY")
+  boot_img = common.GetBootableImage("boot.img", "boot.img",
+                                     input_dir, "BOOT")
+
+  if not recovery_img or not boot_img:
+    sys.exit(0)
+
+  def output_sink(fn, data):
+    if data is None:
+      print >> sys.stderr, "make_recovery_patch: no data for %s" % (fn,)
+      sys.exit(1)
+    with open(os.path.join(output_dir, "SYSTEM", *fn.split("/")), "wb") as f:
+      f.write(data)
+
+  # MakeRecoveryPatch passes "-b recovery-resource.dat" to the diff program
+  # if that file exists; hide it so neither the patch nor the generated
+  # install-recovery.sh use the imgdiff-only bonus file.
+  bonus = os.path.join(input_dir, "SYSTEM", "etc", "recovery-resource.dat")
+  hidden = bonus + ".a3-hidden"
+  if os.path.exists(bonus):
+    os.rename(bonus, hidden)
+  common.Difference = _BsdiffDifference
+  try:
+    common.MakeRecoveryPatch(input_dir, output_sink, recovery_img, boot_img)
+  finally:
+    if os.path.exists(hidden):
+      os.rename(hidden, bonus)
+
+
+if __name__ == '__main__':
+  main(sys.argv[1:])

@@ -382,8 +382,10 @@ on post-fs-data
     chown system system /proc/wmt_tm/wmt_val
     chown system system /proc/wmt_tm/wfd_stat
 
-# SGX init
-service pvrsrvctl /system/vendor/bin/pvrsrvctl --start
+# SGX init. The pvrsrvctl blob is non-PIE and L's linker won't run it;
+# pvrsrvinit (device tree) does "pvrsrvctl --start --no-module" (modules are
+# insmodded above).
+service pvrsrvctl /system/bin/pvrsrvinit
     class main
     user root
     group root

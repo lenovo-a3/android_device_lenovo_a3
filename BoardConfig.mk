@@ -52,6 +52,9 @@ TARGET_POWERHAL_VARIANT := cm
 # boot
 TARGET_NO_BOOTLOADER := true
 BOARD_CUSTOM_BOOTIMG_MK := $(LOCAL_PATH)/boot.mk
+# Put our boot.img (with the MTK headers) into target-files BOOTABLE_IMAGES/,
+# otherwise releasetools rebuilds it with plain mkbootimg and lk can't boot it
+BOARD_CUSTOM_BOOTIMG := true
 
 # EGL settings
 USE_OPENGL_RENDERER := true
@@ -102,6 +105,8 @@ TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/recovery.fstab
 # No recovery-from-boot patch: imgdiff can't diff our LZMA recovery ramdisk
 # against the gzip boot ramdisk, and the ROM shouldn't rewrite RECOVERY at boot.
 BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH := true
+# ...and none in target-files either (see the script)
+TARGET_RELEASETOOL_MAKE_RECOVERY_PATCH_SCRIPT := $(LOCAL_PATH)/releasetools/make_recovery_patch
 # Untested on the MTK framebuffer: if colours are wrong, try "BGRA_8888" / "RGBX_8888";
 # if the screen stays black or does not update, try BOARD_RECOVERY_NEEDS_FBIOPAN_DISPLAY := true.
 #TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"

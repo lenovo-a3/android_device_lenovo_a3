@@ -98,6 +98,10 @@ PRODUCT_PACKAGES += \
 	libmtkshim \
 	libcorkscrew
 
+# SGX init: PIE replacement for the non-PIE pvrsrvctl blob (pvrsrvinit/Android.mk)
+PRODUCT_PACKAGES += \
+	pvrsrvinit
+
 # audio
 PRODUCT_PACKAGES += \
 	audio.r_submix.default \
