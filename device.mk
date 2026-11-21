@@ -82,6 +82,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
 	ro.mediatek.wlan.p2p=1 \
 	ro.mediatek.wlan.wsc=1 \
 	ro.opengles.version=131072 \
+	ro.sf.hwrotation=270 \
 	ro.sf.lcd_density=160 \
 	ro.telephony.ril_class=MediaTekRIL \
 	wifi.direct.interface=p2p0 \
