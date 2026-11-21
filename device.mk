@@ -98,7 +98,9 @@ PRODUCT_PACKAGES += \
 	libblisrc
 # wifi
 PRODUCT_PACKAGES += \
-	lib_driver_cmd_mtk
+	hostapd \
+	wpa_supplicant \
+	wpa_supplicant.conf
 
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/config/wpa_supplicant_overlay.conf:system/etc/wifi/wpa_supplicant_overlay.conf
