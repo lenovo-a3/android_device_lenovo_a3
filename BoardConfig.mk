@@ -63,7 +63,7 @@ TARGET_PREBUILT_KERNEL := $(LOCAL_PATH)/prebuilt/kernel
 
 # boot.mk calls mkbootimg with BOARD_MKBOOTIMG_ARGS only, so base and pagesize go here too.
 # The cmdline is left empty, like the stock and TWRP 2.7.1 images: init takes ro.hardware
-# (mt6589) from /proc/cpuinfo.
+# (mt8389, from "Hardware : MT8389") from /proc/cpuinfo.
 BOARD_KERNEL_BASE := 0x10000000
 BOARD_KERNEL_PAGESIZE := 2048
 BOARD_MKBOOTIMG_ARGS := --base 0x10000000 --pagesize 2048 \
