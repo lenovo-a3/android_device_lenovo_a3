@@ -108,6 +108,11 @@ PRODUCT_PACKAGES += \
 	libmtkshim \
 	libcorkscrew
 
+# M dropped stlport (external/stlport is in the local manifest); mtk_agpsd and
+# the camera/DRM blobs link libstlport.so
+PRODUCT_PACKAGES += \
+	libstlport
+
 # SGX init: PIE replacement for the non-PIE pvrsrvctl blob (pvrsrvinit/Android.mk)
 PRODUCT_PACKAGES += \
 	pvrsrvinit
