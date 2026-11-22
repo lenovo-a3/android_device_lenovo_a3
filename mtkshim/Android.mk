@@ -25,6 +25,7 @@ LOCAL_MODULE := libmtkshim
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := \
 	audio.c \
+	awesomeplayer.c \
 	camera.c \
 	callstack.c \
 	netutils.c \
