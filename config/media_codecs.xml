@@ -89,9 +89,13 @@ Only the three quirks included above are recognized at this point:
         <MediaCodec name="OMX.google.gsm.decoder" type="audio/gsm" />
 
 
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.MPEG4" type="video/mp4v-es" />
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.H263" type="video/3gpp" />
         <MediaCodec name="OMX.MTK.VIDEO.DECODER.AVC" type="video/avc" >
             <Quirk name="wants-NAL-fragments" />
         </MediaCodec>
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.VPX" type="video/x-vnd.on2.vp8" />
+        <MediaCodec name="OMX.MTK.VIDEO.DECODER.MPEG2" type="video/mpeg2" />
         <MediaCodec name="OMX.google.vp9.decoder" type="video/x-vnd.on2.vp9" />
         <MediaCodec name="OMX.google.vp8.decoder" type="video/x-vnd.on2.vp8" />
         <MediaCodec name="OMX.google.aac.decoder" type="audio/mp4a-latm" />
