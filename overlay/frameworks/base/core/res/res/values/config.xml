@@ -74,76 +74,50 @@
 
     <bool name="config_automatic_brightness_available">true</bool>
 
+    <!-- The APDS9930 driver (Lenovo cust_alsps.c) only reports these lux values:
+         1, 640, 800, 1500, 2500, 5000, 7400, 9000, 10240. One curve point per value. -->
     <integer-array name="config_autoBrightnessLevels">
-        <item>16</item>
-	<item>32</item>
-	<item>50</item>
-	<item>100</item>
-	<item>140</item>
-	<item>180</item>
-	<item>240</item>
-	<item>300</item>
-	<item>600</item>
-	<item>1000</item>
-	<item>2000</item>
-	<item>3000</item>
-	<item>4000</item>
-	<item>8000</item>
-	<item>10000</item>
+        <item>1</item>
+        <item>640</item>
+        <item>800</item>
+        <item>1500</item>
+        <item>2500</item>
+        <item>5000</item>
+        <item>7400</item>
+        <item>10240</item>
     </integer-array>
     <integer-array name="config_autoBrightnessLcdBacklightValues">
-        <item>30</item>
-	<item>40</item>
-	<item>50</item>
-	<item>60</item>
-	<item>70</item>
-	<item>80</item>
-	<item>102</item>
-	<item>102</item>
-	<item>102</item>
-	<item>102</item>
-	<item>102</item>
-	<item>180</item>
-	<item>200</item>
-	<item>210</item>
-	<item>230</item>
-	<item>255</item>
+        <item>10</item>
+        <item>20</item>
+        <item>80</item>
+        <item>120</item>
+        <item>160</item>
+        <item>200</item>
+        <item>225</item>
+        <item>245</item>
+        <item>255</item>
     </integer-array>
     <integer-array name="config_autoBrightnessButtonBacklightValues">
         <item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
     </integer-array>
     <integer-array name="config_autoBrightnessKeyboardBacklightValues">
         <item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
-	<item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
     </integer-array>
 
 <!-- Whether a software navigation bar should be shown. NOTE: in the future this may be autodetected from the Configuration. -->
