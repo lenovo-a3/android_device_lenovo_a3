@@ -92,12 +92,6 @@ PRODUCT_PROPERTY_OVERRIDES := \
 	wifi.interface=wlan0 \
 	wifi.tethering.interface=ap0
 
-# The framebuffer is 1024x600 landscape; hwrotation=270 makes the display
-# 600x1024 (natural portrait). This makes landscape the default rotation, so
-# the boot animation and the pre-boot dialogs are landscape (SurfaceFlinger,
-# BootAnimation, WindowManager, PhoneWindowManager, RotationPolicy read it).
-PRODUCT_PROPERTY_OVERRIDES += \
-	persist.panel.orientation=90
 
 PRODUCT_TAGS += dalvik.gc.type-precise
 
