@@ -285,8 +285,8 @@ public class MediaTekRIL extends RIL implements CommandsInterface {
             }
 
             if (strings[i] != null && (strings[i].equals("") || strings[i].equals(strings[i+2]))) {
-		Operators init = new Operators ();
-		String temp = init.unOptimizedOperatorReplace(strings[i+2]);
+		// CM 13 has no Operators class / selective-spn-conf.xml: fall back to the numeric.
+		String temp = strings[i+2];
 		riljLog("lookup RIL responseOperatorInfos() " + strings[i+2] + " gave " + temp);
                 strings[i] = temp;
                 strings[i+1] = temp;
@@ -392,7 +392,7 @@ public class MediaTekRIL extends RIL implements CommandsInterface {
             case RIL_REQUEST_ENTER_SIM_PUK2: ret =  responseInts(p); break;
             case RIL_REQUEST_CHANGE_SIM_PIN: ret =  responseInts(p); break;
             case RIL_REQUEST_CHANGE_SIM_PIN2: ret =  responseInts(p); break;
-            case RIL_REQUEST_ENTER_DEPERSONALIZATION_CODE: ret =  responseInts(p); break;
+            case RIL_REQUEST_ENTER_NETWORK_DEPERSONALIZATION: ret =  responseInts(p); break;
             case RIL_REQUEST_GET_CURRENT_CALLS: ret =  responseCallList(p); break;
             case RIL_REQUEST_DIAL: ret =  responseVoid(p); break;
             case RIL_REQUEST_GET_IMSI: ret =  responseString(p); break;
@@ -664,8 +664,8 @@ public class MediaTekRIL extends RIL implements CommandsInterface {
         }
 		
         if (response[0] != null && (response[0].equals("") || response[0].equals(response[2]))) {
-	    Operators init = new Operators ();
-	    String temp = init.unOptimizedOperatorReplace(response[2]);
+	    // CM 13 has no Operators class / selective-spn-conf.xml: fall back to the numeric.
+	    String temp = response[2];
 	    riljLog("lookup RIL responseOperator() " + response[2] + " gave " + temp + " was " + response[0] + "/" + response[1] + " before.");
 	    response[0] = temp;
 	    response[1] = temp;
@@ -789,9 +789,9 @@ public class MediaTekRIL extends RIL implements CommandsInterface {
     }
 
     @Override
-    public void setUiccSubscription(int slotId, int appIndex, int subId,
-				    int subStatus, Message result) {
-	    if (RILJ_LOGD) riljLog("setUiccSubscription" + slotId + " " + appIndex + " " + subId + " " + subStatus);
+    public void setUiccSubscription(int appIndex, boolean activate, Message result) {
+	    int subStatus = activate ? 1 : 0;
+	    if (RILJ_LOGD) riljLog("setUiccSubscription " + appIndex + " " + subStatus);
 
 	    // Fake response (note: should be sent before mSubscriptionStatusRegistrants or
 	    // SubscriptionManager might not set the readiness correctly)

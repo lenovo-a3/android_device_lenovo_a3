@@ -23,9 +23,9 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <bt_vendor_lib.h>
-#include <bt_hci_lib.h>
-#include <bt_hci_bdroid.h>
-#include <utils.h>
+
+/* M's bluedroid has no bt_hci_lib.h; value from L's bt_hc_status_t (nonzero = failure). */
+#define BT_HC_STATUS_FAIL 1
 
 /**
  * TODO: check/fix this value. does this make sense for MTK? It is taken from TI
@@ -43,7 +43,7 @@ ENABLE mtk_bt_enable = NULL;
 DISABLE mtk_bt_disable = NULL;
 
 bt_vendor_callbacks_t *bt_vendor_cbacks = NULL;
-void hw_config_cback(HC_BT_HDR *p_evt_buf);
+void hw_config_cback(void *p_evt_buf);
 
 /*******************************************************************************
  *
@@ -54,7 +54,7 @@ void hw_config_cback(HC_BT_HDR *p_evt_buf);
  * Returns          None
  *
  * *******************************************************************************/
-void hw_config_cback(HC_BT_HDR *p_evt_buf)
+void hw_config_cback(void *p_evt_buf)
 {
   ALOGI("hw_config_cback");
 }

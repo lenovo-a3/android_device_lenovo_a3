@@ -54,7 +54,6 @@
 #include <pthread.h>
 
 #ifdef MUX_ANDROID
-#include <pathconf.h>
 #include <sys/socket.h>
 #include <cutils/sockets.h>
 #include <cutils/properties.h>

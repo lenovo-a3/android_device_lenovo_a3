@@ -55,7 +55,6 @@
 #include <pthread.h>
 
 #ifdef MUX_ANDROID
-#include <pathconf.h>
 #include <sys/socket.h>
 #include <cutils/sockets.h>
 #include <cutils/properties.h>
@@ -1152,8 +1151,8 @@ static GSM0710_Buffer *gsm0710_buffer_init()
 		buf->writep = buf->data;
 		buf->endp = buf->data + GSM0710_BUFFER_SIZE;
 
-		buf->bufferready_signal.value = 0;
-		buf->newdataready_signal.value = 0;
+		pthread_cond_init(&buf->bufferready_signal, NULL);
+		pthread_cond_init(&buf->newdataready_signal, NULL);
 	}
 	return buf;
 }
