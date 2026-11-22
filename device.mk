@@ -50,7 +50,8 @@ PRODUCT_COPY_FILES += \
 
 PRODUCT_COPY_FILES += \
 	$(LOCAL_PATH)/config/media_codecs.xml:system/etc/media_codecs.xml \
-	$(LOCAL_PATH)/config/media_profiles.xml:system/etc/media_profiles.xml
+	$(LOCAL_PATH)/config/media_profiles.xml:system/etc/media_profiles.xml \
+	$(LOCAL_PATH)/config/a3-nvram-permissions.xml:system/etc/permissions/a3-nvram-permissions.xml
 
 PRODUCT_PROPERTY_OVERRIDES := \
 	fmradio.driver.chip=3 \

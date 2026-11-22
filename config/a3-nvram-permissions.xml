@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     MTK NVRAM (/data/nvram, group nvram = AID_NVRAM 9995) for the Bluetooth stack.
+
+     libbluetooth_mtk reads the BT address and radio settings from
+     /data/nvram/APCFG/APRDEB/BT_Addr in the Bluetooth app's process, through
+     libnvram, which creates everything nvram:nvram 0770/0660. Stock used gid
+     9997 for nvram, the same gid as AID_EVERYBODY, so every app was in the
+     group. We moved nvram to 9995 (system/core 2b8effb), so the Bluetooth app
+     has to get the gid explicitly; without it the chip never starts
+     ("Nvram data all zero", "Can't open mtk fd").
+
+     BLUETOOTH_STACK would be the natural place, but platform.xml already
+     defines it and SystemConfig refuses a second definition. BLUETOOTH_MAP is
+     a framework signature permission that only the Bluetooth app requests
+     and that has no gid of its own, so this adds nvram to that app only.
+-->
+<permissions>
+    <permission name="android.permission.BLUETOOTH_MAP" >
+        <group gid="nvram" />
+    </permission>
+</permissions>
