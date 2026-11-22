@@ -14,8 +14,8 @@
 # (no class main). They are optional, so they must not be able to block the boot.
 
 # external microSD and USB OTG (vold)
-/devices/platform/mtk-msdc.1/mmc_host/mmc1  auto  auto  nosuid,nodev  voldmanaged=sdcard1:auto
-/devices/platform/mt_usb                    auto  auto  nosuid,nodev  voldmanaged=usbdisk0:auto
+/devices/platform/mtk-msdc.1/mmc_host/mmc1* auto  auto  nosuid,nodev  voldmanaged=sdcard1:auto
+/devices/platform/mt_usb*                   auto  auto  nosuid,nodev  voldmanaged=usbdisk0:auto
 
 # raw MTK dumchar partitions
 /dev/bootimg           /boot        emmc    defaults                                                  defaults
