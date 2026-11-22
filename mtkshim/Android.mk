@@ -25,6 +25,7 @@ LOCAL_SRC_FILES := \
 	camera.c \
 	callstack.c \
 	netutils.c \
+	parcel.c \
 	pmem.c \
 	ssl.c \
 	tracer.c
