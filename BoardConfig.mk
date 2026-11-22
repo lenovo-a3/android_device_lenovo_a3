@@ -34,8 +34,6 @@ COMMON_GLOBAL_CPPFLAGS += -DMTK_G_MT6589
 # cm-12.1's own MTK support (liblog __xlog_buf_printf, stagefright buffer alignment, ...)
 COMMON_GLOBAL_CFLAGS += -DMTK_HARDWARE
 BOARD_HAS_MTK_HARDWARE := true
-# libutils RefBase::moveReferences, called by hwcomposer.mt8389.so and libcam.*
-COMMON_GLOBAL_CFLAGS += -DREFBASE_JB_MR1_COMPAT_SYMBOLS
 BOARD_HAVE_PRE_KITKAT_AUDIO_BLOB := true
 BOARD_HAVE_PRE_KITKAT_AUDIO_POLICY_BLOB := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true

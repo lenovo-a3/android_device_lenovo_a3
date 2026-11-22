@@ -31,7 +31,8 @@ LOCAL_SRC_FILES := \
 	parcel.c \
 	pmem.c \
 	ssl.c \
-	tracer.c
+	tracer.c \
+	ui.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES := liblog libdl
 LOCAL_CFLAGS := -Wall -Werror
