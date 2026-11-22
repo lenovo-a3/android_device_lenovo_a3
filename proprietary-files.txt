@@ -55,7 +55,6 @@ lib/hw/camera.default.so
 lib/hw/gps.default.so
 lib/hw/gralloc.default.so
 lib/hw/hwcomposer.mt8389.so
-lib/hw/keystore.default.so
 lib/hw/lights.default.so
 lib/hw/local_time.default.so
 lib/hw/power.default.so
@@ -90,7 +89,6 @@ lib/libfile_op.so
 lib/libhwm.so 
 lib/libimageio.so
 lib/libion.so
-lib/libkeystore_client.so
 lib/libm4u.so
 lib/libmatv_cust.so
 lib/libmpo.so
