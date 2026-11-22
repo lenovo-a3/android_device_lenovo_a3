@@ -107,6 +107,10 @@ TARGET_RECOVERY_FSTAB := $(LOCAL_PATH)/recovery.fstab
 BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH := true
 # ...and none in target-files either (see the script)
 TARGET_RELEASETOOL_MAKE_RECOVERY_PATCH_SCRIPT := $(LOCAL_PATH)/releasetools/make_recovery_patch
+# Without this, build/core/Makefile falls back to xhdpi assets (720x320 header,
+# 18x32 menu font): only ~2 menu items fit on the 600 px tall screen. The panel
+# is ~170 ppi and the ROM runs at lcd_density 160, so mdpi.
+TARGET_RECOVERY_DENSITY := mdpi
 # Untested on the MTK framebuffer: if colours are wrong, try "BGRA_8888" / "RGBX_8888";
 # if the screen stays black or does not update, try BOARD_RECOVERY_NEEDS_FBIOPAN_DISPLAY := true.
 #TARGET_RECOVERY_PIXEL_FORMAT := "BGRA_8888"
