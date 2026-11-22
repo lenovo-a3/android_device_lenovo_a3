@@ -102,6 +102,16 @@ lib/librilmtk.so
 lib/libspeech_enh_lib.so
 lib/libssladp.so
 lib/mtk-ril.so
+lib/libMtkOmxCore.so
+lib/libMtkOmxVdec.so
+lib/libMtkOmxVenc.so
+lib/libmp4enc_xa.ca7.so
+lib/libsched.so
+lib/libstagefright_memutil.so
+lib/libstagefrighthw.so
+lib/libvcodec_oal.so
+lib/libvcodec_utility.so
+lib/libvcodecdrv.so
 vendor/bin/pvrsrvctl
 vendor/bin/rc.fac
 vendor/lib/egl/libEGL_mtk.so
