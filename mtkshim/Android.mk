@@ -10,6 +10,9 @@
 # libcorkscrew: L dropped libcorkscrew, but gralloc.mt8389.so has it in
 # DT_NEEDED, so a library of that name has to exist.
 #
+# libshim_rilmtk: Parcel() for librilmtk.so's KK-sized stack Parcels (see
+# rilmtk.c). LD_PRELOADed for rild only, from the ril-daemon service.
+#
 # camera.c is generated (tools/gen-mtkcamparams.py in the workspace).
 #
 # Symbol list: see shim-audit.txt / tools/blob-audit.py in the workspace.
@@ -38,5 +41,13 @@ include $(CLEAR_VARS)
 LOCAL_MODULE := libcorkscrew
 LOCAL_MODULE_TAGS := optional
 LOCAL_SRC_FILES := corkscrew.c
+LOCAL_CFLAGS := -Wall -Werror
+include $(BUILD_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := libshim_rilmtk
+LOCAL_MODULE_TAGS := optional
+LOCAL_SRC_FILES := rilmtk.c
+LOCAL_SHARED_LIBRARIES := liblog libdl
 LOCAL_CFLAGS := -Wall -Werror
 include $(BUILD_SHARED_LIBRARY)

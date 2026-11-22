@@ -67,6 +67,7 @@ PRODUCT_PROPERTY_OVERRIDES := \
 	persist.radio.fd.r8.counter=15 \
 	persist.sys.usb.config=adb \
 	ril.current.share_modem=2 \
+	persist.radio.multisim.config=dsds \
 	ril.external.md=0 \
 	ril.first.md=1 \
 	ril.flightmode.poweroffMD=1 \
@@ -106,7 +107,8 @@ PRODUCT_PACKAGES += \
 # KK blob compatibility (mtkshim/Android.mk); libmtkshim is LD_PRELOADed in init.mt8389.rc
 PRODUCT_PACKAGES += \
 	libmtkshim \
-	libcorkscrew
+	libcorkscrew \
+	libshim_rilmtk
 
 # M dropped stlport (external/stlport is in the local manifest); mtk_agpsd and
 # the camera/DRM blobs link libstlport.so

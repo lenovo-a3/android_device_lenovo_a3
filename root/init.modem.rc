@@ -61,6 +61,8 @@ service ril-daemon /system/bin/rild
     socket rild-atci stream 660 root radio
     user root
     group radio cache inet misc audio sdcard_r sdcard_rw log ccci system
+    # librilmtk's KK-sized Parcels (mtkshim/rilmtk.c); keeps the global libmtkshim
+    setenv LD_PRELOAD /system/lib/libmtkshim.so:/system/lib/libshim_rilmtk.so
     disabled
 
 service md_minilog_util /system/bin/md_minilog_util
