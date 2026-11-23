@@ -66,6 +66,10 @@ BOARD_EGL_WORKAROUND_BUG_10194508 := true
 TARGET_KERNEL_SOURCE := kernel/lenovo/a3
 TARGET_KERNEL_CONFIG := a3_defconfig
 export TARGET_KERNEL_PRODUCT := a3000_row_call
+# Same toolchain as CM 12.1/13 (arm-eabi-4.8). N's default, 4.9 arm-linux-androidkernel-,
+# has no ld.bfd, which the kernel Makefile uses for LD.
+KERNEL_TOOLCHAIN := $(ANDROID_BUILD_TOP)/prebuilts/gcc/$(HOST_PREBUILT_TAG)/arm/arm-eabi-4.8/bin
+TARGET_KERNEL_CROSS_COMPILE_PREFIX := arm-eabi-
 # Fallback, used only while kernel/lenovo/a3 is absent: zImage from TWRP 2.7.1.0 FUSE,
 # MTK header stripped (boot.mk adds it back).
 TARGET_PREBUILT_KERNEL := $(LOCAL_PATH)/prebuilt/kernel
