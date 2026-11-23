@@ -99,8 +99,13 @@ INTERNAL_MTK_RECOVERYIMAGE_ARGS := \
 		--kernel $(PRODUCT_OUT)/recovery_kernel.mtk \
 		--ramdisk $(recovery_ramdisk).mtk
 
+# bsdiff (order-only): releasetools/make_recovery_patch runs it when packaging
+# target-files. N only builds it for the recovery_from_boot.p rule, which
+# BOARD_CANT_BUILD_RECOVERY_FROM_BOOT_PATCH turns off, and the target-files
+# rule is defined after this file is included, so hang it on recovery.img.
 $(INSTALLED_RECOVERYIMAGE_TARGET): $(MKBOOTIMG) \
-		$(recovery_ramdisk).mtk $(PRODUCT_OUT)/recovery_kernel.mtk
+		$(recovery_ramdisk).mtk $(PRODUCT_OUT)/recovery_kernel.mtk \
+		| $(HOST_OUT_EXECUTABLES)/bsdiff
 	@echo -e ${CL_CYN}"----- Making recovery image ------"${CL_RST}
 	$(MKBOOTIMG) $(INTERNAL_MTK_RECOVERYIMAGE_ARGS) \
 		$(BOARD_MKBOOTIMG_ARGS) --output $@
