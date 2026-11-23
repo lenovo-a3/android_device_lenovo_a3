@@ -104,6 +104,12 @@ PRODUCT_PACKAGES += \
 	libcorkscrew \
 	libshim_rilmtk
 
+# N: fs_config overrides (android_filesystem_config.h): no file capabilities on
+# surfaceflinger, or AT_SECURE drops the libmtkshim LD_PRELOAD
+PRODUCT_PACKAGES += \
+	fs_config_dirs \
+	fs_config_files
+
 # M dropped stlport (external/stlport is in the local manifest); mtk_agpsd and
 # the camera/DRM blobs link libstlport.so
 PRODUCT_PACKAGES += \

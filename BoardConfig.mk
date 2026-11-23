@@ -36,6 +36,10 @@ BOARD_USES_MTK_HARDWARE := true
 BOARD_HAVE_PRE_KITKAT_AUDIO_BLOB := true
 BOARD_HAVE_PRE_KITKAT_AUDIO_POLICY_BLOB := true
 TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
+# N's linker refuses libraries with text relocations (libmtk_drvb: mtk_agpsd,
+# libblisrc: audio HAL, libcamalgo: camera HAL); this allows them again for
+# platform processes (bionic/linker, target SDK == current API)
+TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
 
 # BT
 BOARD_HAVE_BLUETOOTH := true
