@@ -33,7 +33,8 @@ LOCAL_SRC_FILES := \
 	pmem.c \
 	ssl.c \
 	tracer.c \
-	ui.c
+	ui.c \
+	xlog.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_SHARED_LIBRARIES := liblog libdl
 LOCAL_CFLAGS := -Wall -Werror

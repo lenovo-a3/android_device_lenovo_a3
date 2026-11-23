@@ -142,3 +142,58 @@ int PKCS12_verify_mac(void *p12, const char *pass, int passlen)
     pkcs_unsupported(__func__);
     return 0;
 }
+
+/*
+ * SSL_ctrl/SSL_CTX_ctrl: N's BoringSSL dropped them (the OpenSSL macros are
+ * real functions there). libssladp.so only uses the commands below (from its
+ * disassembly); map them to the BoringSSL functions. Anything else fails
+ * (0) with a log line.
+ */
+#define SSL_CTRL_GET_SESSION_REUSED  8
+#define SSL_CTRL_OPTIONS             32
+#define SSL_CTRL_SET_SESS_CACHE_MODE 44
+#define SSL_CTRL_SET_TLSEXT_HOSTNAME 55
+
+static void *ssl_sym(const char *name)
+{
+    void *fn = dlsym(RTLD_DEFAULT, name);
+
+    if (!fn)
+        __android_log_print(ANDROID_LOG_ERROR, "mtkshim", "%s not found", name);
+    return fn;
+}
+
+long SSL_ctrl(void *ssl, int cmd, long larg, void *parg)
+{
+    switch (cmd) {
+    case SSL_CTRL_GET_SESSION_REUSED: {
+        int (*fn)(const void *) = (int (*)(const void *))ssl_sym("SSL_session_reused");
+        return fn ? fn(ssl) : 0;
+    }
+    case SSL_CTRL_SET_TLSEXT_HOSTNAME: {
+        int (*fn)(void *, const char *) =
+            (int (*)(void *, const char *))ssl_sym("SSL_set_tlsext_host_name");
+        return fn ? fn(ssl, (const char *)parg) : 0;
+    }
+    }
+    __android_log_print(ANDROID_LOG_WARN, "mtkshim", "SSL_ctrl: unsupported cmd %d (larg %ld)", cmd, larg);
+    return 0;
+}
+
+long SSL_CTX_ctrl(void *ctx, int cmd, long larg, void *parg)
+{
+    (void)parg;
+    switch (cmd) {
+    case SSL_CTRL_OPTIONS: {
+        unsigned (*fn)(void *, unsigned) =
+            (unsigned (*)(void *, unsigned))ssl_sym("SSL_CTX_set_options");
+        return fn ? (long)fn(ctx, (unsigned)larg) : 0;
+    }
+    case SSL_CTRL_SET_SESS_CACHE_MODE: {
+        int (*fn)(void *, int) = (int (*)(void *, int))ssl_sym("SSL_CTX_set_session_cache_mode");
+        return fn ? fn(ctx, (int)larg) : 0;
+    }
+    }
+    __android_log_print(ANDROID_LOG_WARN, "mtkshim", "SSL_CTX_ctrl: unsupported cmd %d (larg %ld)", cmd, larg);
+    return 0;
+}
