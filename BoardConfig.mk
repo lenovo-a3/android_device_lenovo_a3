@@ -134,7 +134,6 @@ BOARD_RIL_CLASS := ../../../$(LOCAL_PATH)/ril/
 # nvram permission fix
 TARGET_SPECIFIC_HEADER_PATH := $(LOCAL_PATH)/include
 
-# selinux: our 3.4 kernel only loads policy versions <= 26 (M defaults to 30).
-# sepolicy/ioctl_macros drops M's ioctl command lists, which v26 can't hold.
+# selinux: our 3.4 kernel only loads policy versions <= 26 (N defaults to 30).
+# Our system/sepolicy strips the allowxperm rules, which v26 can't hold.
 POLICYVERS := 26
-BOARD_SEPOLICY_DIRS += device/lenovo/a3/sepolicy

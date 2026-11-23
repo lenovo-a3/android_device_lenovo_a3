@@ -1,7 +1,0 @@
-# Our 3.4 kernel only loads policy versions <= 26 (POLICYVERS in BoardConfig.mk),
-# and v26 has no ioctl command whitelisting ("ioctl operation rules", v30).
-# This file is concatenated right after external/sepolicy/ioctl_macros, so the
-# redefinitions below replace the command lists before any .te file uses them:
-# the rules then allow the plain ioctl permission on those socket classes.
-define(`unpriv_sock_ioctls', `ioctl')
-define(`unpriv_unix_sock_ioctls', `ioctl')
