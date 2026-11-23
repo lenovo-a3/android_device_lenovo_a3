@@ -40,6 +40,10 @@ TARGET_RUNNING_WITHOUT_SYNC_FRAMEWORK := true
 # libblisrc: audio HAL, libcamalgo: camera HAL); this allows them again for
 # platform processes (bionic/linker, target SDK == current API)
 TARGET_NEEDS_PLATFORM_TEXT_RELOCATIONS := true
+# Kernel 3.4 has no finit_module (3.8+): N's init insmod and libhardware_legacy's
+# wifi insmod fail with ENOSYS ("finit_module ... Function not implemented") and
+# no module loads (pvrsrvkm, ccci, vcodec, wifi). Use init_module instead.
+KERNEL_HAS_FINIT_MODULE := false
 
 # BT
 BOARD_HAVE_BLUETOOTH := true
